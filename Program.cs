@@ -6,7 +6,7 @@ namespace Vertex
     class Program
     {
         private DiscordSocketClient? _client;
-        private readonly string _token = "MTE1NjM2NjQyMjE0NzA4MDM0Mw.GbWvv7.XbIbbp9M9wfp0sDQwtDHSrBZRFDWSJWfhIyURk";
+        private readonly string _token = "TOKEN";
 
         public static Task Main(string[] args) => new Program().MainAsync();
 
