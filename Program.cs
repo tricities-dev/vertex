@@ -1,7 +1,7 @@
-﻿namespace TridevDiscordBot {
+﻿namespace Vertex {
     class Program {
         static void Main() {
-            Console.WriteLine("TriDev Discord Bot");
+            Console.WriteLine("Vertex Discord Bot");
         }
     }
 }
