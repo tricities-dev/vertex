@@ -8,15 +8,12 @@ A Discord bot for the best Discord community out there, TriDev. Vertex comes jam
 2. Open an issue for @jaketothepast to add you to the Discord developer team.
 3. Compile and run the bot locally, with the correct Discord bot token.
 
-## Discord Environments
+## Running the Bot
 
-We currently have two applications
-
-1. Vertex - the production app, used to power our prod bot user.
-2. Vertex Test - our private app, used as a staging ground for new bot features.
-
-We also have the test server: Vertex-Test. This server is used as our development environment.
-
-## Production
-
-Currently running in DigitalOcean.
+1. Go to Discord developer portal
+2. Create a new application
+3. Create a new bot user
+4. Generate the invite link.
+5. Add the bot to your server with the link.
+6. Use the bot token as an environment variable `BOT_TOKEN` to start the app
+7. Start the bot, profit!
