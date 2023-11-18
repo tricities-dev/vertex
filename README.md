@@ -14,3 +14,9 @@ We currently have two applications
 
 1. Vertex - the production app, used to power our prod bot user.
 2. Vertex Test - our private app, used as a staging ground for new bot features.
+
+We also have the test server: Vertex-Test. This server is used as our development environment.
+
+## Production
+
+Currently running in DigitalOcean.
