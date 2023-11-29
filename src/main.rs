@@ -1,9 +1,9 @@
 use discord::Discord;
 use clap::Parser;
-use discord::model::ServerId;
+use discord::model::{Event, ServerId};
 use dotenv::dotenv;
 use std::str::FromStr;
-use std::u64;
+use std::{u64};
 
 extern crate discord;
 
@@ -44,11 +44,37 @@ fn get_discord(bot_token: &str) -> Discord {
         panic!("invalid bot token");
     }
 
+    return Discord::from_bot_token(bot_token).expect("Expected token");
+}
 
-    return match Discord::from_bot_token(bot_token) {
-        Ok(discord) => discord,
-        Err(err) => panic!("error happened: {}", err)
-    };
+fn bot_loop(discord: Discord) {
+    let (mut connection, _) = discord.connect().expect("connect failed");
+    println!("Ready.");
+
+    loop {
+        match connection.recv_event() {
+            Ok(Event::MessageCreate(message)) => {
+                println!("{} says: {}", message.author.name, message.content);
+                if message.content == "!test" {
+                    let _ = discord.send_message(
+                        message.channel_id,
+                        "This is a reply to the test.",
+                        "",
+                        false,
+                    );
+                } else if message.content == "!quit" {
+                    println!("Quitting.");
+                    break;
+                }
+            }
+            Ok(_) => {}
+            Err(discord::Error::Closed(code, body)) => {
+                println!("Gateway closed on us with code {:?}: {}", code, body);
+                break;
+            }
+            Err(err) => println!("Receive error: {:?}", err),
+        }
+    }
 }
 
 /// Extracts the server id from the config
@@ -62,7 +88,8 @@ fn main() {
     let discord = get_discord(cfg.bot_token.as_str());
     let server_id = ServerId(self::get_server_id(cfg));
     let server = discord.get_server(server_id).unwrap();
-    println!("{}", server.name);
+    println!("Connected to {}!", server.name);
+    bot_loop(discord);
 }
 
 #[cfg(test)]
