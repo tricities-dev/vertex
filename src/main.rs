@@ -22,11 +22,6 @@ pub struct Config {
     /// TODO: This will probably change if/when this bot becomes more generic.
     #[arg(short, long, env("SERVER_ID"))]
     pub server_id: String,
-    //
-    // /// Your Discord App's Public Key
-    // /// TODO: Is this needed?
-    // #[arg(short = "k", long, env("DISCORD_PUBLIC_KEY"))]
-    // pub discord_public_key: String,
 }
 
 impl Config {
