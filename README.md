@@ -15,5 +15,7 @@ A Discord bot for the best Discord community out there, TriDev. Vertex comes jam
 3. Create a new bot user
 4. Generate the invite link.
 5. Add the bot to your server with the link.
-6. Use the bot token as an environment variable `BOT_TOKEN` to start the app
+6. Use the bot token as an environment variable `BOT_TOKEN` to start the app.
+   * Create a copy of `.env.sample` and name it `.env`. In this file, you can set `BOT_TOKEN` or other 
+     environment variables you may want to set.
 7. Start the bot, profit!
