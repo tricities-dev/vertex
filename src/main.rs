@@ -1,57 +1,46 @@
-use discord::Discord;
-use clap::Parser;
-use dotenv::dotenv;
+use serenity::async_trait;
+use serenity::prelude::*;
+use serenity::model::gateway::Ready;
+use serenity::framework::standard::macros::group;
+use serenity::framework::standard::{StandardFramework, Configuration};
 
-extern crate discord;
+mod config;
+use config::Config;
 
-// TODO: Better validation of Discord token.
-const BOT_TOKEN_LENGTH: usize = 72;
+mod commands;
+use crate::commands::ping::*;
+use crate::commands::speak::*;
+use crate::commands::help::*;
 
-/// Tri-Cities Vertex Discord Bot
-#[derive(Parser, Debug)]
-#[command(author, version, about)]
-pub struct Config {
-    /// Your bot token you got from Discord Developer portal.
-    #[arg(short, long, env("BOT_TOKEN"))]
-    pub bot_token: String
-}
+#[group]
+#[commands(ping, hello, introduce, help)]
+struct General;
 
-impl Config {
-    pub fn from_env_and_args() -> Self {
-        dotenv().ok();
-        Self::parse()
+struct Handler;
+
+#[async_trait]
+impl EventHandler for Handler {
+    async fn ready(&self, _ctx: Context, _data_about_bot: Ready) {
+        println!("Vertex is running...");
     }
 }
 
-fn get_discord(bot_token: &str) -> Discord {
-    if bot_token.len() < BOT_TOKEN_LENGTH {
-        panic!("invalid bot token");
-    }
+#[tokio::main]
+async fn main() {
+    let token = Config::load().bot_token;
 
-    return match Discord::from_bot_token(bot_token) {
-        Ok(discord) => discord,
-        Err(err) => panic!("error happened: {}", err)
-    }
-}
+    let framework = StandardFramework::new().group(&GENERAL_GROUP);
+    framework.configure(Configuration::new().prefix("!")); // set the bot's prefix to "~"
 
-fn main() {
-    let cfg = Config::from_env_and_args();
-    let discord = get_discord(cfg.bot_token.as_str());
-}
+    let intents = GatewayIntents::non_privileged() | GatewayIntents::MESSAGE_CONTENT;
+    let mut client = Client::builder(token, intents)
+        .event_handler(Handler)
+        .framework(framework)
+        .await
+        .expect("Error starting bot...");
 
-#[cfg(test)]
-mod tests {
-    use crate::get_discord;
-
-    #[test]
-    #[should_panic]
-    fn invalid_bot_token_errors() {
-        get_discord("invalid");
-    }
-
-    #[test]
-    fn valid_bot_token_no_error() {
-        // Our only validation rule right now is length
-        get_discord("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    // start listening for events by starting a single shard
+    if let Err(why) = client.start().await {
+        println!("An error occurred while running the bot: {:?}", why);
     }
 }
